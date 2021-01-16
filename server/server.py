@@ -8,7 +8,9 @@ import numpy as np
 from flask import Flask, render_template, Response, request
 import cv2
 
-from transform import transform_init, transform as transform_image, crop_img
+from face_transform import transform_init, transform as transform_image, crop_img
+from facial_verification import verify_same_face
+
 import imageio
 from skimage import img_as_ubyte
 
@@ -58,6 +60,10 @@ def configure():
     decoded_frame = cv2.cvtColor(decoded_frame, cv2.COLOR_BGR2RGB)
     decoded_frame = cv2.flip(crop_img(decoded_frame), 1)
 
+    if not verify_same_face(decoded_source, decoded_frame):
+      # TODO: Figure out not-same-face behavior
+      return ("#", 200)
+
     source_tensor, kp_source, kp_driving_initial = transform_init(decoded_source, decoded_frame)
 
     uid = generate_uid()
@@ -69,8 +75,6 @@ def configure():
       "kp_driving_initial": kp_driving_initial,
       "source_tensor": source_tensor,
     }
-
-    # TODO: Hook into verification here
 
     return (uid, 200)
 
