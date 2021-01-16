@@ -2,7 +2,7 @@ import random
 import string
 from collections import defaultdict
 
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request
 import cv2
 
 from transform import transform_init, transform, crop_img
@@ -74,3 +74,7 @@ def transform():
     frame = request.form["frame"]
 
     return (gen_transformed_frames(frame, uid), 200)
+
+
+if __name__ == '__main__':
+    app.run()
