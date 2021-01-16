@@ -10,10 +10,11 @@ app = Flask(__name__)
 
 camera = cv2.VideoCapture(0)
 
-source_image = imageio.imread('images/hannah.png')
+source_image = imageio.imread('images/ryan.png')
 source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
 success, frame = camera.read()
 driving_image = frame
+verified = False
 
 source_tensor, kp_source, kp_driving_initial = transform_init(source_image, driving_image)
 
@@ -25,8 +26,11 @@ def gen_tranformed_frames():
             break
         else:
             frame = cv2.flip(crop_img(frame), 1)
-            transformed_frame = transform(kp_source, kp_driving_initial, frame, source_tensor)
-            frame_ubytes = img_as_ubyte(transformed_frame)
+            if verified:
+                transformed_frame = transform(kp_source, kp_driving_initial, frame, source_tensor)
+                frame_ubytes = img_as_ubyte(transformed_frame)
+            else:
+                frame_ubytes = frame
             ret, buffer = cv2.imencode('.jpg', frame_ubytes)
             stream_bytes = buffer.tobytes()
             yield (b'--frame\r\n'
@@ -47,15 +51,16 @@ def gen_frames():  # generate frame by frame from camera
 
 @app.route('/configure', methods = ['POST'])
 def configure():
-    global kp_driving_initial
+    global kp_driving_initial, verified
     _, driving_image = camera.read()
 
     distance = face_distance(source_image, driving_image)
-    threshold = 0.25
-    # print('distance', distance, 'threshold', threshold)
+    threshold = 0.20
+    print('distance', distance, 'threshold', threshold)
     if distance > threshold:
         return ('', 204)
 
+    verified = True
     _, _, kp_driving_initial = transform_init(source_image, driving_image)
     return ('', 204)
 
