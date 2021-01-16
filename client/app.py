@@ -12,6 +12,7 @@ configure_url = server_url + "/configure"
 transform_url = server_url + "/transform"
 
 uid = None
+NULL_UID = '#'
 
 def crop_img(img):
     w = img.shape[0]
@@ -92,7 +93,7 @@ def video_feed():
 
 @app.route('/transform')
 def transform():
-  if uid:
+  if uid and uid is not NULL_UID:
     return Response(gen_transformed_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
   return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
