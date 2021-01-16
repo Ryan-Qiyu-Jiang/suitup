@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, redirect, url_for
 import base64
 import cv2
 import imageio
@@ -63,7 +63,7 @@ def configure():
     global uid
     uid = r.text
       
-    return ('', 204)
+    return redirect(url_for('index'))
 
 
 def gen_transformed_frames():
@@ -92,13 +92,15 @@ def video_feed():
 
 @app.route('/transform')
 def transform():
-  return Response(gen_transformed_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+  if uid:
+    return Response(gen_transformed_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+  return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/')
 def index():
     """Video streaming home page."""
-    return render_template('index.html', uid=(uid != None))
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

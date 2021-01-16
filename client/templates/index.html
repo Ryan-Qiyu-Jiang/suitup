@@ -15,8 +15,6 @@
         <p><input type = "submit" /></p>
     </form>
     <img src="{{ url_for('video_feed') }}" width="256" height="256">
-    {% if uid %}
-        <img src="{{ url_for('transform') }}" width="256" height="256">
-    {% endif %}
+    <img src="{{ url_for('transform') }}" width="256" height="256">
 </body>
 </html>
