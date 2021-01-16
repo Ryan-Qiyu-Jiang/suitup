@@ -9,7 +9,7 @@ from flask import Flask, render_template, Response, request
 import cv2
 
 from face_transform import transform_init, transform as transform_image, crop_img
-from facial_verification import verify_same_face
+from facial_verification import verify_same_face, face_distance
 
 import imageio
 from skimage import img_as_ubyte
@@ -24,6 +24,9 @@ def generate_uid():
 
 
 def gen_transformed_frames(decoded_frame, uid):
+    if not uid in users:
+      return None
+      
     user_info = users[uid]
     if not user_info:
       return None
@@ -53,14 +56,16 @@ def configure():
     frame_as_np = np.fromstring(base64.b64decode(encoded_frame), np.uint8)
 
     decoded_source = cv2.imdecode(source_as_np, cv2.IMREAD_COLOR)
-    decoded_source = cv2.cvtColor(decoded_source, cv2.COLOR_BGR2RGB)
+    # decoded_source = cv2.cvtColor(decoded_source, cv2.COLOR_BGR2RGB)
     decoded_source = cv2.flip(crop_img(decoded_source), 1)
 
     decoded_frame = cv2.imdecode(frame_as_np, cv2.IMREAD_COLOR)
     decoded_frame = cv2.cvtColor(decoded_frame, cv2.COLOR_BGR2RGB)
     decoded_frame = cv2.flip(crop_img(decoded_frame), 1)
 
-    if not verify_same_face(decoded_source, decoded_frame):
+    distance = face_distance(decoded_source, decoded_frame)
+    print('distance', distance)
+    if distance > 0.3:
       # TODO: Figure out not-same-face behavior
       return ("#", 200)
 
