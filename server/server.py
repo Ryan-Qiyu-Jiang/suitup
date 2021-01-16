@@ -81,13 +81,18 @@ def configure():
     return (uid, 200)
 
 
-@app.route('/transform')
+@app.route('/transform', methods = ['POST'])
 def transform():
     # Configure will take a source image and a frame
     uid = request.form["uid"]
-    frame = request.form["frame"]
+    encoded_frame = request.form["frame"]
 
-    return (gen_transformed_frames(frame, uid), 200)
+    frame_as_np = np.fromstring(base64.b64decode(encoded_frame), np.uint8)
+    decoded_frame = cv2.imdecode(frame_as_np, cv2.IMREAD_COLOR)
+    decoded_frame = cv2.cvtColor(decoded_frame, cv2.COLOR_BGR2RGB)
+    decoded_frame = cv2.flip(crop_img(decoded_frame), 1)
+
+    return (gen_transformed_frames(decoded_frame, uid), 200)
 
 
 if __name__ == '__main__':
