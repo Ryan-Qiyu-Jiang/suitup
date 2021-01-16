@@ -23,7 +23,7 @@ cpu=True
 
 from fomModel import load_checkpoints
 generator, kp_detector = load_checkpoints(config_path='config/vox-256.yaml', 
-                            checkpoint_path=r'C:\Users\ryanq\Documents\dev\first-order-model\checkpoints\vox-cpk.pth.tar')
+                            checkpoint_path='../checkpoints/vox-cpk.pth.tar')
 
 def crop_img(img):
     w = img.shape[0]
