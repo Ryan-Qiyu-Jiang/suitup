@@ -35,7 +35,7 @@ mkl-fft==1.0.6
 mkl-random==1.0.1
 msgpack==1.0.1
 networkx==2.1
-numpy==1.15
+numpy==1.15.0
 olefile==0.46
 opencv-python==4.5.1.48
 packaging==20.8
