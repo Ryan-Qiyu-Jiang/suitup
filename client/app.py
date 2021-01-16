@@ -7,7 +7,7 @@ import requests
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
 
-server_url = "http://localhost:5000"
+server_url = "http://127.0.0.1:5000"
 configure_url = server_url + "/configure"
 transform_url = server_url + "/transform"
 
