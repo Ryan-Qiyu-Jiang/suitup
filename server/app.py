@@ -1,9 +1,10 @@
 from flask import Flask, render_template, Response
 import cv2
 
-from transform import transform_init, transform, crop_img
+from face_transform import transform_init, transform, crop_img
 import imageio
 from skimage import img_as_ubyte
+from facial_verification import verify_same_face, face_distance
 
 app = Flask(__name__)
 
@@ -16,10 +17,10 @@ driving_image = frame
 
 source_tensor, kp_source, kp_driving_initial = transform_init(source_image, driving_image)
 
-def gen_tranformed_frames():  # generate frame by frame from camera
+def gen_tranformed_frames(): 
     while True:
         # Capture frame-by-frame
-        success, frame = camera.read()  # read the camera frame
+        success, frame = camera.read()  
         if not success:
             break
         else:
@@ -48,6 +49,13 @@ def gen_frames():  # generate frame by frame from camera
 def configure():
     global kp_driving_initial
     _, driving_image = camera.read()
+
+    distance = face_distance(source_image, driving_image)
+    threshold = 0.25
+    # print('distance', distance, 'threshold', threshold)
+    if distance > threshold:
+        return ('', 204)
+
     _, _, kp_driving_initial = transform_init(source_image, driving_image)
     return ('', 204)
 

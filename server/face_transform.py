@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from skimage.transform import resize
 from IPython.display import HTML
-from fomModel import normalize_kp
+from fom_model import normalize_kp
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -21,7 +21,7 @@ relative=True
 adapt_movement_scale=True
 cpu=True
 
-from fomModel import load_checkpoints
+from fom_model import load_checkpoints
 generator, kp_detector = load_checkpoints(config_path='config/vox-256.yaml', 
                             checkpoint_path='checkpoints/vox-cpk.pth.tar')
 
@@ -62,3 +62,5 @@ def transform (kp_source, kp_driving_initial, driving_frame, source):
                                 use_relative_jacobian=relative, adapt_movement_scale=adapt_movement_scale)
         out = generator(source, kp_source=kp_source, kp_driving=kp_norm)
         return np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0]
+
+
