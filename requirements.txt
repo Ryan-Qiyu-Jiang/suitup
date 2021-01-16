@@ -1,57 +1,58 @@
-absl-py @ file:///tmp/build/80754af9/absl-py_1607439979954/work
+absl-py==0.11.0
 astor==0.8.1
 backcall==0.2.0
-bokeh @ file:///C:/ci/bokeh_1593187680264/work
+bokeh==2.1.1
 certifi==2020.12.5
 cffi==1.11.5
 click==7.1.2
 cloudpickle==0.5.3
-colorama @ file:///tmp/build/80754af9/colorama_1607707115595/work
+colorama==0.4.4
 cycler==0.10.0
 cytoolz==0.11.0
 dask==0.18.2
 decorator==4.3.0
 distributed==1.28.1
 Flask==1.1.2
-gast @ file:///tmp/build/80754af9/gast_1597433534803/work
-grpcio @ file:///C:/ci/grpcio_1597406495377/work
+gast==0.4.0
+grpcio==1.31.0
 h5py==2.10.0
 HeapDict==1.0.1
 imageio==2.3.0
-importlib-metadata @ file:///tmp/build/80754af9/importlib-metadata_1602276842396/work
-ipykernel @ file:///C:/ci/ipykernel_1596206775157/work/dist/ipykernel-5.3.4-py3-none-any.whl
-ipython @ file:///C:/ci/ipython_1593446240034/work
-ipython-genutils @ file:///tmp/build/80754af9/ipython_genutils_1606773439826/work
+importlib-metadata==2.0.0
+ipykernel==5.3.4
+ipython==7.16.1
+ipython-genutils==0.2.0
 itsdangerous==1.1.0
-jedi @ file:///C:/ci/jedi_1608920799722/work
+jedi==0.18.0
 Jinja2==2.11.2
-jupyter-client @ file:///tmp/build/80754af9/jupyter_client_1601311786391/work
-jupyter-core @ file:///C:/ci/jupyter_core_1606149071529/work
-Keras-Applications @ file:///tmp/build/80754af9/keras-applications_1594366238411/work
+jupyter-client==6.1.7
+jupyter-core==4.7.0
+Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.0
 kiwisolver==1.0.1
 locket==0.2.0
-Markdown @ file:///C:/ci/markdown_1605111171606/work
+Markdown==3.3.3
 MarkupSafe==1.1.1
 matplotlib==2.2.2
 mkl-fft==1.0.6
 mkl-random==1.0.1
-msgpack @ file:///C:/ci/msgpack-python_1607965904074/work
+msgpack==1.0.1
 networkx==2.1
 numpy==1.15.0
 olefile==0.46
 opencv-python==4.5.1.48
-packaging @ file:///tmp/build/80754af9/packaging_1607971725249/work
+packaging==20.8
 pandas==0.23.4
 parso==0.7.0
 partd==1.1.0
-pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
+pickleshare==0.7.5
 Pillow==5.2.0
-prompt-toolkit @ file:///tmp/build/80754af9/prompt-toolkit_1602688806899/work
+pip==20.3.3
+prompt-toolkit==3.0.8
 protobuf==3.13.0
-psutil @ file:///C:/ci/psutil_1598352185190/work
+psutil==5.7.2
 pycparser==2.18
-Pygments @ file:///tmp/build/80754af9/pygments_1610565767015/work
+Pygments==2.7.4
 pyparsing==2.2.0
 pyreadline==2.1
 python-dateutil==2.7.3
@@ -63,10 +64,11 @@ pyzmq==20.0.0
 scikit-image==0.14.0
 scikit-learn==0.19.2
 scipy==1.1.0
+setuptools==51.1.2.post20210112
 six==1.11.0
-sortedcontainers @ file:///tmp/build/80754af9/sortedcontainers_1606865132123/work
+sortedcontainers==2.3.0
 TBB==0.1
-tblib @ file:///tmp/build/80754af9/tblib_1597928476713/work
+tblib==1.7.0
 tensorboard==1.12.2
 tensorboardX==2.1
 tensorflow==1.12.0
@@ -75,12 +77,13 @@ tifffile==2020.9.3
 toolz==0.9.0
 torch==1.0.0
 torchvision==0.2.1
-tornado @ file:///C:/ci/tornado_1606942379977/work
+tornado==6.1
 tqdm==4.24.0
 traitlets==4.3.3
-typing-extensions @ file:///tmp/build/80754af9/typing_extensions_1598376058250/work
-wcwidth @ file:///tmp/build/80754af9/wcwidth_1593447189090/work
+typing-extensions==3.7.4.3
+wcwidth==0.2.5
 Werkzeug==1.0.1
+wheel==0.36.2
 wincertstore==0.2
 zict==2.0.0
-zipp @ file:///tmp/build/80754af9/zipp_1604001098328/work
+zipp==3.4.0
