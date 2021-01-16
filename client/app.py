@@ -39,7 +39,7 @@ def gen_frames():  # generate frame by frame from camera
 
 @app.route('/configure', methods = ['POST'])
 def configure():
-    source_image = imageio.imread('images/jack3.png')
+    source_image = imageio.imread('images/jack3.jpg')
     source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
     _, source_buffer = cv2.imencode('.jpg', source_image)
 
@@ -58,12 +58,12 @@ def configure():
 
     if r.status_code != 200:
       print("error")
-      return ('', 200) 
+      return ('', 204) 
 
     global uid
     uid = r.text
       
-    return ('', 200)
+    return ('', 204)
 
 
 def gen_transformed_frames():
