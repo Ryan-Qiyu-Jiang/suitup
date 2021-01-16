@@ -13,6 +13,30 @@ transform_url = server_url + "/transform"
 
 uid = None
 
+def crop_img(img):
+    w = img.shape[0]
+    h = img.shape[1]
+    crop_size = min(w,h)
+    startx = w//2-(crop_size//2)
+    starty = h//2-(crop_size//2)
+    cropped = img[starty:starty+crop_size, startx:startx+crop_size]
+    return cropped
+
+
+def gen_frames():  # generate frame by frame from camera
+    while True:
+        # Capture frame-by-frame
+        success, frame = camera.read()  # read the camera frame
+        if not success:
+            break
+        else:
+            frame = cv2.flip(crop_img(frame), 1)
+            ret, buffer = cv2.imencode('.jpg', frame)
+            stream_bytes = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + stream_bytes + b'\r\n')
+
+
 @app.route('/configure', methods = ['POST'])
 def configure():
     source_image = imageio.imread('images/ryan.png')
@@ -42,20 +66,33 @@ def configure():
     return ('', 200)
 
 
+def gen_transformed_frames():
+  while True:
+      # Capture frame-by-frame
+      success, frame = camera.read()  # read the camera frame
+      if not success:
+          break
+      else:
+          _, frame_buffer = cv2.imencode('.jpg', frame)
+          frame_encoded = base64.b64encode(frame_buffer)
+          data = {
+            "uid": uid,
+            "frame": frame_encoded
+          }
+
+          r = requests.post(transform_url, data=data)
+          yield (b'--frame\r\n'
+                  b'Content-Type: image/jpeg\r\n\r\n' + r.content + b'\r\n')
+
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
 @app.route('/transform')
 def transform():
-    _, frame = camera.read()
-    _, frame_buffer = cv2.imencode('.jpg', frame)
-    frame_encoded = base64.b64encode(frame_buffer)
-
-    data = {
-      "uid": uid,
-      "frame": frame_encoded
-    }
-
-    r = requests.post(transform_url, data=data)
-
-    return Response(r.content, mimetype='multipart/x-mixed-replace; boundary=frame')
+  return Response(gen_transformed_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/')
