@@ -18,6 +18,7 @@ h5py==2.10.0
 HeapDict==1.0.1
 imageio==2.3.0
 importlib-metadata==2.0.0
+imutils==0.5.4
 ipykernel==5.3.4
 ipython==7.16.1
 ipython-genutils==0.2.0
