@@ -15,7 +15,7 @@ uid = None
 
 @app.route('/configure', methods = ['POST'])
 def configure():
-    source_image = imageio.imread('images/ryan.png')
+    source_image = imageio.imread('images/jack3.png')
     source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
     _, source_buffer = cv2.imencode('.jpg', source_image)
 

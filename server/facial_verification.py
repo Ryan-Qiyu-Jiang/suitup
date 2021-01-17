@@ -3,6 +3,8 @@ sys.path.append('../')
 
 from lib.face_detection import get_facial_roi
 from lib.face_embedding import embed_face
+
+import cv2
 import numpy as np
 
 def get_face(rois, image):
@@ -21,6 +23,7 @@ def get_face(rois, image):
             s_x, s_y, e_x, e_y = start_x, start_y, end_x, end_y
 
     max_face = image[start_y:end_y, start_x:end_x]
+
     return max_face
 
 def euclidian_distance(vec1, vec2):
