@@ -22,7 +22,7 @@ def scale_img(img, dim):
 def scale_crop(img):
     h,w = img.shape[:2]
     s = 256/min(h,w)
-    img = scale_img(img, (int(w*s), int(w*s)))
+    img = scale_img(img, (int(w*s), int(h*s)))
     img = center_crop(img, 256)
     return img
 
