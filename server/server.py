@@ -16,7 +16,7 @@ import imageio
 from skimage import img_as_ubyte
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, logger=True, engineio_logger=True)
 
 users = defaultdict(lambda: None)
 

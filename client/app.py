@@ -13,7 +13,6 @@ server_url = "http://127.0.0.1:5000"
 configure_url = server_url + "/configure"
 transform_url = server_url + "/transform"
 
-
 def crop_img(img):
     w = img.shape[0]
     h = img.shape[1]
@@ -27,6 +26,8 @@ def crop_img(img):
 success, frame = camera.read()  # read the camera frame
 frame = cv2.flip(crop_img(frame), 1)
 ret, buffer = cv2.imencode('.jpg', frame)
+
+received = True
 currframe = buffer.tobytes()
 is_connected = False
 
@@ -37,6 +38,9 @@ def message(data):
     # Mutate currframe here
     global currframe
     currframe = data
+
+    global received
+    received = True
 
 @sio.event
 def connect():
@@ -115,10 +119,11 @@ def gen_transformed_frames():
               "frame": frame_encoded
             }
 
+            global received
             global sio
-            if is_connected:
+            if is_connected and received:
               sio.emit('data', data)
-              time.sleep(0.2)
+              received = False
 
               global currframe
               yield (b'--frame\r\n'
