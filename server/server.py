@@ -44,8 +44,8 @@ def gen_transformed_frames(frame, uid):
 @app.route('/configure', methods = ['POST'])
 def configure():
     # Configure will take a source image and a frame
-    source_image = request.json["source"]
-    frame = request.json["frame"]
+    source_image = request.form["source"]
+    frame = request.form["frame"]
 
     source_tensor, kp_source, kp_driving_initial = transform_init(source_image, frame)
 
@@ -67,7 +67,7 @@ def configure():
 @app.route('/transform')
 def transform():
     # Configure will take a source image and a frame
-    uid = request.json["uid"]
-    frame = request.json["frame"]
+    uid = request.form["uid"]
+    frame = request.form["frame"]
 
     return (gen_transformed_frames(frame, uid), 200)
