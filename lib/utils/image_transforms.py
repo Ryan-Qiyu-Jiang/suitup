@@ -2,10 +2,11 @@ import cv2
 import numpy as np
 
 
-def center_crop(img):
+def center_crop(img, crop_size=None):
     w = img.shape[0]
     h = img.shape[1]
-    crop_size = min(w, h)
+    if crop_size is None:
+        crop_size = min(w, h)
     startx = w//2-(crop_size//2)
     starty = h//2-(crop_size//2)
     cropped = img[starty:starty+crop_size, startx:startx+crop_size]
@@ -19,8 +20,10 @@ def scale_img(img, dim):
 
 
 def scale_crop(img):
-    img = scale_img(img, (256, 256))
-    img = center_crop(img)
+    h,w = img.shape[:2]
+    s = 256/min(h,w)
+    img = scale_img(img, (int(w*s), int(w*s)))
+    img = center_crop(img, 256)
     return img
 
 
