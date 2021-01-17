@@ -134,3 +134,5 @@ dmypy.json
 pyvenv.cfg
 pip-selfcheck.json
 Scripts
+lib/tcl8.6
+lib/site-packages
