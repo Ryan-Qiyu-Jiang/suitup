@@ -8,7 +8,7 @@ import numpy as np
 from flask import Flask, render_template, Response, request
 import cv2
 
-from transform import transform_init, transform, crop_img
+from transform import transform_init, transform as transform_image, crop_img
 import imageio
 from skimage import img_as_ubyte
 
@@ -21,22 +21,16 @@ def generate_uid():
     return ''.join(random.choice(letters) for i in range(8))
 
 
-def gen_transformed_frames(frame, uid):
-    decoded_image = cv2.imdecode(frame, 1)
-
-    # Process the image for color and orientation
-    decoded_image = cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB)
-    decoded_image = cv2.flip(crop_img(decoded_image), 1)
-
+def gen_transformed_frames(decoded_frame, uid):
     user_info = users[uid]
     if not user_info:
       return None
 
     # Use the stuff we have stored for the user
-    transformed_frame = transform(
+    transformed_frame = transform_image(
         user_info["kp_source"],
         user_info["kp_driving_initial"],
-        decoded_image,
+        decoded_frame,
         user_info["source_tensor"],
     )
 
