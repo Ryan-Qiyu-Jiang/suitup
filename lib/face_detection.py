@@ -4,7 +4,7 @@ import imutils
 import pickle
 import cv2
 import os
-from utils.image_transforms import scale_crop
+from lib.utils.image_transforms import scale_crop
 
 proto_path = '../lib/detection_model/deploy.prototxt'
 model_path = '../lib/detection_model/res10_300x300_ssd_iter_140000.caffemodel'
