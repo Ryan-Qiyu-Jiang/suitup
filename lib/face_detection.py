@@ -26,6 +26,8 @@ def get_facial_roi(img):
 
 def get_face_location(image, rois):
     h, w = image.shape[:2]
+    cv2.imshow('source', image)
+    cv2.waitKey(0)
     max_conf = 0
     s_x, s_y, e_x, e_y = rois[0, 0, 0, 3:7] * np.array([w, h, w, h])
     for i in range(rois.shape[2]):
@@ -38,13 +40,17 @@ def get_face_location(image, rois):
             if fW < 20 or fH < 20:
                 continue
             s_x, s_y, e_x, e_y = start_x, start_y, end_x, end_y
+            
+    max_face = image[s_y:e_y, s_x:e_x]
+    cv2.imshow('', max_face)
+    cv2.waitKey(0)
     return (s_x, s_y, e_x, e_y)
 
 def get_source_frame(image, start_x, start_y, end_x, end_y):
-    center_x = (end_x+start_x)/2
-    center_y = (end_y-start_y)/2
-    fH, fW = (end_y-start_y, end_x-start_x)
+    center_x = int((end_x+start_x)/2)
+    center_y = int((end_y+start_y)/2)
+    fH, fW = ((end_y-start_y)*1.5, (end_x-start_x)*1.5)
     crop_size = (fH+fW)/2
-    s = crop_size/2
+    s = int(crop_size/2)
     face = image[center_y-s:center_y+s, center_x-s:center_x+s]
     return scale_crop(face)
