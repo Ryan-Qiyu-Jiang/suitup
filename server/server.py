@@ -50,7 +50,13 @@ def configure():
     source_image = request.form["source"]
     frame = request.form["frame"]
 
-    source_tensor, kp_source, kp_driving_initial = transform_init(source_image, frame)
+    decoded_image = cv2.imdecode(frame)
+
+    # Process the image for color and orientation
+    decoded_image = cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB)
+    decoded_image = cv2.flip(crop_img(decoded_image), 1)
+
+    source_tensor, kp_source, kp_driving_initial = transform_init(source_image, decoded_image)
 
     uid = generate_uid()
     while users[uid] != None:
