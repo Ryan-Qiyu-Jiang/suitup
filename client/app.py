@@ -7,7 +7,7 @@ import imageio
 import cv2
 import base64
 from flask import Flask, render_template, Response, redirect, url_for
-
+from lib.face_detection import get_facial_roi, get_face_location, get_source_frame
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
@@ -38,11 +38,17 @@ def gen_frames():  # generate frame by frame from camera
 
 @app.route('/configure', methods=['POST'])
 def configure():
-    source_image = imageio.imread('images/ryan.png')
+    source_image = imageio.imread('images/jack4.png')
     source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
-
-    source_image = cv2.flip(scale_crop(source_image), 1)
-    _, source_buffer = cv2.imencode('.jpg', source_image)
+    rois = get_facial_roi(source_image)
+    s_x, s_y, e_x, e_y = get_face_location(source_image, rois)
+    face = source_image[s_y:e_y, s_x:e_x]
+    cropped = get_source_frame(source_image, s_x, s_y, e_x, e_y)
+    _, source_buffer = cv2.imencode('.jpg', cropped)
+    
+    # source_image = cv2.flip(scale_crop(source_image), 1)
+    
+    # _, source_buffer = cv2.imencode('.jpg', source_image)
 
     _, frame = camera.read()
     frame = cv2.flip(scale_crop(frame), 1)
