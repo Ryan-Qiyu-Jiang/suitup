@@ -66,6 +66,9 @@ def configure():
     global uid
     uid = r.text
 
+    if uid == NULL_UID:
+      return redirect(url_for('mismatch'))
+
     return redirect(url_for('index'))
 
 
@@ -126,6 +129,9 @@ def index():
 def upload():
     return render_template("upload.html")
 
+@app.route("/mismatch", methods=["GET", "POST"])
+def mismatch():
+    return render_template("mismatch.html")
 
 if __name__ == '__main__':
     app.run(port=3000)
