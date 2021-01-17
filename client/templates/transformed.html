@@ -12,13 +12,26 @@
 </head>
 <style>
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    form {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    button {
+        margin: 10px;
     }
 </style>
 <body>
+    <form action = "{{ url_for('configure') }}" method = "post">
+        <button class="btn btn-primary" type="submit">Configure</button>
+    </form>
     <img src="{{ url_for('transform') }}" width="256" height="256">
 </body>
 </html>

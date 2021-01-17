@@ -6,7 +6,8 @@ import requests
 import imageio
 import cv2
 import base64
-from flask import Flask, render_template, Response, redirect, url_for
+from flask import Flask, render_template, Response, redirect, url_for, request
+import numpy as np
 
 
 app = Flask(__name__)
@@ -20,6 +21,10 @@ transform_url = server_url + "/transform"
 
 uid = None
 NULL_UID = '#'
+
+source_image = imageio.imread('images/ryan.png')
+source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
+source_image = cv2.flip(scale_crop(source_image), 1)
 
 
 def gen_frames():  # generate frame by frame from camera
@@ -38,10 +43,6 @@ def gen_frames():  # generate frame by frame from camera
 
 @app.route('/configure', methods=['POST'])
 def configure():
-    source_image = imageio.imread('images/ryan.png')
-    source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
-
-    source_image = cv2.flip(scale_crop(source_image), 1)
     _, source_buffer = cv2.imencode('.jpg', source_image)
 
     _, frame = camera.read()
@@ -100,12 +101,30 @@ def transform():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+@app.route("/upload-image", methods=["POST"])
+def upload_image():
+    if request.method == "POST":
+        if request.files:
+            image = request.files["image"]
+
+            global source_image
+            source_image = cv2.imdecode(np.fromstring(image.read(), np.uint8), cv2.IMREAD_COLOR)
+            source_image = cv2.flip(scale_crop(source_image), 1)
+
+    return redirect(url_for('index'))
+
+
 @app.route('/')
 def index():
     """Video streaming home page."""
     if uid and uid is not NULL_UID :
         return render_template('transformed.html')
     return render_template('index.html') 
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    return render_template("upload.html")
 
 
 if __name__ == '__main__':
