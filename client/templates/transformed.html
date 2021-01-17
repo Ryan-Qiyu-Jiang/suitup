@@ -5,32 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="style.css">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-    
 </head>
 <style>
     body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    form {
-        position: absolute;
-        top: 0;
-        left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 </style>
 <body>
-    <form action = "{{ url_for('configure') }}" method = "post">
-        <p><input type = "submit" /></p>
-    </form>
-    <img src="{{ url_for('video_feed') }}" width="256" height="256">
+    <img src="{{ url_for('transform') }}" width="256" height="256">
 </body>
 </html>

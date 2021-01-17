@@ -103,7 +103,9 @@ def transform():
 @app.route('/')
 def index():
     """Video streaming home page."""
-    return render_template('index.html')
+    if uid and uid is not NULL_UID :
+        return render_template('transformed.html')
+    return render_template('index.html') 
 
 
 if __name__ == '__main__':
