@@ -13,17 +13,6 @@ configure_url = server_url + "/configure"
 transform_url = server_url + "/transform"
 
 
-# standard Python
-currframe = None
-sio = socketio.Client()
-@sio.event
-def message(data):
-    print('msg :' + data)
-    # Mutate currframe here
-
-uid = None
-NULL_UID = '#'
-
 def crop_img(img):
     w = img.shape[0]
     h = img.shape[1]
@@ -33,6 +22,36 @@ def crop_img(img):
     cropped = img[starty:starty+crop_size, startx:startx+crop_size]
     return cropped
 
+
+
+success, frame = camera.read()  # read the camera frame
+frame = cv2.flip(crop_img(frame), 1)
+ret, buffer = cv2.imencode('.jpg', frame)
+currframe = buffer.tobytes()
+
+# standard Python
+sio = socketio.Client()
+@sio.on('transformed')
+def message(data):
+    print('msg :')
+    # Mutate currframe here
+    global currframe
+    currframe = data
+
+@sio.event
+def connect():
+    print("I'm connected!")
+
+@sio.event
+def connect_error():
+    print("The connection failed!")
+
+@sio.event
+def disconnect():
+    print("I'm disconnected!")
+
+uid = None
+NULL_UID = '#'
 
 def gen_frames():  # generate frame by frame from camera
     while True:
@@ -76,7 +95,7 @@ def configure():
 
     global sio
     if not sio.sid:
-      sio.connect('ws://localhost:5000/connect')
+      sio.connect('http://localhost:5000', namespaces=['/'])
 
     return redirect(url_for('index'))
 
@@ -99,7 +118,8 @@ def gen_transformed_frames():
             print("emitted!")
 
             global currframe
-            yield "tmp"
+            yield (b'--frame\r\n'
+                  b'Content-Type: image/jpeg\r\n\r\n' + currframe + b'\r\n')
             """
             yield (b'--frame\r\n'
                   b'Content-Type: image/jpeg\r\n\r\n' + currframe + b'\r\n')
