@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+import base64
 import cv2
 import imageio
 import requests
@@ -13,13 +14,17 @@ configure_url = server_url + "/configure"
 def configure():
     source_image = imageio.imread('images/ryan.png')
     source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
-    source = cv2.imencode('.jpg', source_image)[1].tobytes()
+    source, source_buffer = cv2.imencode('.jpg', source_image)
 
     _, frame = camera.read()
-    frame = cv2.imencode('.jpg', frame)[1].tostring()
+    frame, frame_buffer = cv2.imencode('.jpg', frame)
+
+    source_encoded = base64.b64encode(source_buffer)
+    frame_encoded = base64.b64encode(frame_buffer)
+
     data = {
-      "source": source,
-      "frame": frame
+      "source": source_encoded,
+      "frame": frame_encoded,
     }
 
     r = requests.post(configure_url, data=data)

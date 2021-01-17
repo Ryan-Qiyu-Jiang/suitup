@@ -2,6 +2,9 @@ import random
 import string
 from collections import defaultdict
 
+import base64
+import numpy as np
+
 from flask import Flask, render_template, Response, request
 import cv2
 
@@ -11,7 +14,7 @@ from skimage import img_as_ubyte
 
 app = Flask(__name__)
 
-users = defaultdict(lambda x : None)
+users = defaultdict(lambda: None)
 
 def generate_uid():
     letters = string.ascii_letters
@@ -19,7 +22,7 @@ def generate_uid():
 
 
 def gen_transformed_frames(frame, uid):
-    decoded_image = cv2.imdecode(frame)
+    decoded_image = cv2.imdecode(frame, 1)
 
     # Process the image for color and orientation
     decoded_image = cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB)
@@ -47,16 +50,21 @@ def gen_transformed_frames(frame, uid):
 @app.route('/configure', methods = ['POST'])
 def configure():
     # Configure will take a source image and a frame
-    source_image = request.form["source"]
-    frame = request.form["frame"]
+    encoded_source = request.form["source"]
+    encoded_frame = request.form["frame"]
 
-    decoded_image = cv2.imdecode(frame)
+    source_as_np = np.fromstring(base64.b64decode(encoded_source), np.uint8)
+    frame_as_np = np.fromstring(base64.b64decode(encoded_frame), np.uint8)
 
-    # Process the image for color and orientation
-    decoded_image = cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB)
-    decoded_image = cv2.flip(crop_img(decoded_image), 1)
+    decoded_source = cv2.imdecode(source_as_np, cv2.IMREAD_COLOR)
+    decoded_source = cv2.cvtColor(decoded_source, cv2.COLOR_BGR2RGB)
+    decoded_source = cv2.flip(crop_img(decoded_source), 1)
 
-    source_tensor, kp_source, kp_driving_initial = transform_init(source_image, decoded_image)
+    decoded_frame = cv2.imdecode(frame_as_np, cv2.IMREAD_COLOR)
+    decoded_frame = cv2.cvtColor(decoded_frame, cv2.COLOR_BGR2RGB)
+    decoded_frame = cv2.flip(crop_img(decoded_frame), 1)
+
+    source_tensor, kp_source, kp_driving_initial = transform_init(decoded_source, decoded_frame)
 
     uid = generate_uid()
     while users[uid] != None:
