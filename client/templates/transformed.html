@@ -18,7 +18,7 @@
         height: 100vh;
     }
 
-    form {
+    #buttons {
         position: absolute;
         top: 0;
         left: 0;
@@ -29,9 +29,14 @@
     }
 </style>
 <body>
-    <form action = "{{ url_for('configure') }}" method = "post">
-        <button class="btn btn-primary" type="submit">Configure</button>
-    </form>
+    <div id="buttons">
+        <form action = "{{ url_for('configure') }}" method = "post">
+            <button class="btn btn-primary" type="submit">Configure</button>
+        </form>
+        <form action = "{{ url_for('upload') }}">
+            <button class="btn btn-light" type="submit">Upload</button>
+        </form>
+    </div>
     <img src="{{ url_for('transform') }}" width="256" height="256">
 </body>
 </html>

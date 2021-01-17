@@ -17,8 +17,23 @@
       align-items: center;
       height: 100vh;
     }
+
+    #buttons {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    button {
+        margin: 10px;
+    }
 </style>
 <body>
+    <div id="buttons">
+        <form action = "{{ url_for('index') }}">
+            <button class="btn btn-light" type="submit">Back</button>
+        </form>
+    </div>
     <form action="/upload-image" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label>Select image</label>
