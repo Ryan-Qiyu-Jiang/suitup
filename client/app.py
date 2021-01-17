@@ -1,11 +1,12 @@
+import sys
+sys.path.append('../')
+
 from lib.utils.image_transforms import scale_crop
 import requests
 import imageio
 import cv2
 import base64
 from flask import Flask, render_template, Response, redirect, url_for
-import sys
-sys.path.append('../')
 
 
 app = Flask(__name__)

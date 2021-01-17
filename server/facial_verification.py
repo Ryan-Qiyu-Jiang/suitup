@@ -1,10 +1,10 @@
+import sys
+sys.path.append('../')
+
 import numpy as np
 import cv2
 from lib.face_embedding import embed_face
 from lib.face_detection import get_facial_roi
-import sys
-sys.path.append('../')
-
 
 def get_face(rois, image):
     h, w = image.shape[:2]

@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 from lib.utils.image_transforms import correct_dim
 import time
 from skimage import img_as_ubyte
@@ -11,8 +14,6 @@ import base64
 from collections import defaultdict
 import string
 import random
-import sys
-sys.path.append('../')
 
 
 app = Flask(__name__)

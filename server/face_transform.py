@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 from fom_model import load_checkpoints
 import warnings
 from lib.utils.image_transforms import correct_dim
@@ -12,8 +15,6 @@ import cv2
 from tqdm import tqdm
 import torch
 from skimage import img_as_ubyte
-import sys
-sys.path.append('../')
 
 
 warnings.filterwarnings("ignore")
