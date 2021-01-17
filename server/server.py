@@ -6,6 +6,7 @@ import base64
 import numpy as np
 
 from flask import Flask, render_template, Response, request
+from flask_socketio import SocketIO, send, emit
 import cv2
 
 from face_transform import transform_init, transform as transform_image, crop_img
@@ -15,6 +16,7 @@ import imageio
 from skimage import img_as_ubyte
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 users = defaultdict(lambda: None)
 
@@ -65,7 +67,7 @@ def configure():
 
     distance = face_distance(decoded_source, decoded_frame)
     print('distance', distance)
-    if distance > 0.3:
+    if False and distance > 0.3:
       # TODO: Figure out not-same-face behavior
       return ("#", 200)
 
@@ -98,5 +100,21 @@ def transform():
     return (gen_transformed_frames(decoded_frame, uid), 200)
 
 
+@socketio.on('message')
+def handle_message(data):
+    print('received message: ' + data)
+
+
+@socketio.on('connect')
+def handle_connect():
+    print("client connected")
+
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+
+
 if __name__ == '__main__':
-    app.run()
+    print("Server running on " + str(5000))
+    socketio.run(app)

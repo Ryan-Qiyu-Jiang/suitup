@@ -3,6 +3,7 @@ import base64
 import cv2
 import imageio
 import requests
+import socketio
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
@@ -10,6 +11,15 @@ camera = cv2.VideoCapture(0)
 server_url = "http://localhost:5000"
 configure_url = server_url + "/configure"
 transform_url = server_url + "/transform"
+
+
+# standard Python
+currframe = None
+sio = socketio.Client()
+@sio.event
+def message(data):
+    print('msg :' + data)
+    # Mutate currframe here
 
 uid = None
 NULL_UID = '#'
@@ -63,27 +73,55 @@ def configure():
 
     global uid
     uid = r.text
-      
+
+    global sio
+    if not sio.sid:
+      sio.connect('ws://localhost:5000/connect')
+
     return redirect(url_for('index'))
 
 
 def gen_transformed_frames():
-  while True:
-      # Capture frame-by-frame
-      success, frame = camera.read()  # read the camera frame
-      if not success:
-          break
-      else:
-          _, frame_buffer = cv2.imencode('.jpg', frame)
-          frame_encoded = base64.b64encode(frame_buffer)
-          data = {
-            "uid": uid,
-            "frame": frame_encoded
-          }
+    while True:
+        success, frame = camera.read()  # read the camera frame
+        if not success:
+            break
+        else:
+            _, frame_buffer = cv2.imencode('.jpg', frame)
+            frame_encoded = base64.b64encode(frame_buffer)
+            data = {
+              "uid": uid,
+              "frame": frame_encoded
+            }
 
-          r = requests.post(transform_url, data=data)
-          yield (b'--frame\r\n'
-                  b'Content-Type: image/jpeg\r\n\r\n' + r.content + b'\r\n')
+            global sio
+            sio.emit('data', data)
+            print("emitted!")
+
+            global currframe
+            yield "tmp"
+            """
+            yield (b'--frame\r\n'
+                  b'Content-Type: image/jpeg\r\n\r\n' + currframe + b'\r\n')
+            """
+    """
+    while True:
+        # Capture frame-by-frame
+        success, frame = camera.read()  # read the camera frame
+        if not success:
+            break
+        else:
+            _, frame_buffer = cv2.imencode('.jpg', frame)
+            frame_encoded = base64.b64encode(frame_buffer)
+            data = {
+              "uid": uid,
+              "frame": frame_encoded
+            }
+
+            r = requests.post(transform_url, data=data)
+            yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + r.content + b'\r\n')
+    """
 
 
 @app.route('/video_feed')
