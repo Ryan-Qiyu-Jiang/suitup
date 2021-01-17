@@ -24,6 +24,12 @@
         left: 0;
     }
 
+    #video-feed {
+        position: absolute;
+        bottom: 0;
+        left: 0; 
+    }
+
     button {
         margin: 10px;
     }
@@ -37,6 +43,7 @@
             <button class="btn btn-light" type="submit">Upload</button>
         </form>
     </div>
+    <img id="video-feed" src="{{ url_for('video_feed') }}" width="128" height="128">
     <img src="{{ url_for('transform') }}" width="256" height="256">
 </body>
 </html>
