@@ -16,18 +16,21 @@ success, frame = camera.read()
 driving_image = frame
 verified = False
 
-source_tensor, kp_source, kp_driving_initial = transform_init(source_image, driving_image)
+source_tensor, kp_source, kp_driving_initial = transform_init(
+    source_image, driving_image)
 
-def gen_tranformed_frames(): 
+
+def gen_tranformed_frames():
     while True:
         # Capture frame-by-frame
-        success, frame = camera.read()  
+        success, frame = camera.read()
         if not success:
             break
         else:
             frame = cv2.flip(crop_img(frame), 1)
             if verified:
-                transformed_frame = transform(kp_source, kp_driving_initial, frame, source_tensor)
+                transformed_frame = transform(
+                    kp_source, kp_driving_initial, frame, source_tensor)
                 frame_ubytes = img_as_ubyte(transformed_frame)
             else:
                 frame_ubytes = frame
@@ -35,6 +38,7 @@ def gen_tranformed_frames():
             stream_bytes = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + stream_bytes + b'\r\n')  # concat frame one by one and show result
+
 
 def gen_frames():  # generate frame by frame from camera
     while True:
@@ -44,12 +48,13 @@ def gen_frames():  # generate frame by frame from camera
             break
         else:
             frame = cv2.flip(crop_img(frame), 1)
-            ret, buffer = cv2.imencode('.jpg', frame)
+            _, buffer = cv2.imencode('.jpg', frame)
             stream_bytes = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + stream_bytes + b'\r\n')
 
-@app.route('/configure', methods = ['POST'])
+
+@app.route('/configure', methods=['POST'])
 def configure():
     global kp_driving_initial, verified
     _, driving_image = camera.read()
@@ -64,15 +69,16 @@ def configure():
     _, _, kp_driving_initial = transform_init(source_image, driving_image)
     return ('', 204)
 
+
 @app.route('/transformed_feed')
 def transformed_feed():
-    #Video streaming route. Put this in the src attribute of an img tag
+    # Video streaming route. Put this in the src attribute of an img tag
     return Response(gen_tranformed_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/video_feed')
 def video_feed():
-    #Video streaming route. Put this in the src attribute of an img tag
+    # Video streaming route. Put this in the src attribute of an img tag
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 

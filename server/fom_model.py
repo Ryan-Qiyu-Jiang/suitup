@@ -1,6 +1,5 @@
-# import matplotlib
-# matplotlib.use('Agg')
-import os, sys
+import os
+import sys
 import yaml
 from argparse import ArgumentParser
 from tqdm import tqdm
@@ -18,18 +17,22 @@ from scipy.spatial import ConvexHull
 
 
 if sys.version_info[0] < 3:
-    raise Exception("You must use Python 3 or higher. Recommended version is Python 3.7")
+    raise Exception(
+        "You must use Python 3 or higher. Recommended version is Python 3.7")
 
 from torch.utils.data import DataLoader
 import imageio
 from scipy.spatial import ConvexHull
 import numpy as np
 
+
 def normalize_kp(kp_source, kp_driving, kp_driving_initial, adapt_movement_scale=False,
                  use_relative_movement=False, use_relative_jacobian=False):
     if adapt_movement_scale:
-        source_area = ConvexHull(kp_source['value'][0].data.cpu().numpy()).volume
-        driving_area = ConvexHull(kp_driving_initial['value'][0].data.cpu().numpy()).volume
+        source_area = ConvexHull(
+            kp_source['value'][0].data.cpu().numpy()).volume
+        driving_area = ConvexHull(
+            kp_driving_initial['value'][0].data.cpu().numpy()).volume
         adapt_movement_scale = np.sqrt(source_area) / np.sqrt(driving_area)
     else:
         adapt_movement_scale = 1
@@ -42,11 +45,14 @@ def normalize_kp(kp_source, kp_driving, kp_driving_initial, adapt_movement_scale
         kp_new['value'] = kp_value_diff + kp_source['value']
 
         if use_relative_jacobian:
-            jacobian_diff = torch.matmul(kp_driving['jacobian'], torch.inverse(kp_driving_initial['jacobian']))
-            kp_new['jacobian'] = torch.matmul(jacobian_diff, kp_source['jacobian'])
+            jacobian_diff = torch.matmul(
+                kp_driving['jacobian'], torch.inverse(kp_driving_initial['jacobian']))
+            kp_new['jacobian'] = torch.matmul(
+                jacobian_diff, kp_source['jacobian'])
 
     return kp_new
 
+
 def load_checkpoints(config_path, checkpoint_path, cpu=False):
 
     with open(config_path) as f:
@@ -61,24 +67,26 @@ def load_checkpoints(config_path, checkpoint_path, cpu=False):
                              **config['model_params']['common_params'])
     if not cpu:
         kp_detector.cuda()
-    
+
     if cpu:
-        checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
+        checkpoint = torch.load(
+            checkpoint_path, map_location=torch.device('cpu'))
     else:
         checkpoint = torch.load(checkpoint_path)
- 
+
     generator.load_state_dict(checkpoint['generator'])
     kp_detector.load_state_dict(checkpoint['kp_detector'])
-    
+
     if not cpu:
         generator = DataParallelWithCallback(generator)
         kp_detector = DataParallelWithCallback(kp_detector)
 
     generator.eval()
     kp_detector.eval()
-    
+
     return generator, kp_detector
 
+
 def load_checkpoints(config_path, checkpoint_path, cpu=False):
 
     with open(config_path) as f:
@@ -93,20 +101,21 @@ def load_checkpoints(config_path, checkpoint_path, cpu=False):
                              **config['model_params']['common_params'])
     if not cpu:
         kp_detector.cuda()
-    
+
     if cpu:
-        checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
+        checkpoint = torch.load(
+            checkpoint_path, map_location=torch.device('cpu'))
     else:
         checkpoint = torch.load(checkpoint_path)
- 
+
     generator.load_state_dict(checkpoint['generator'])
     kp_detector.load_state_dict(checkpoint['kp_detector'])
-    
+
     if not cpu:
         generator = DataParallelWithCallback(generator)
         kp_detector = DataParallelWithCallback(kp_detector)
 
     generator.eval()
     kp_detector.eval()
-    
+
     return generator, kp_detector
