@@ -4,23 +4,10 @@ sys.path.append('../')
 import numpy as np
 import cv2
 from lib.face_embedding import embed_face
-from lib.face_detection import get_facial_roi
+from lib.face_detection import get_facial_roi, get_face_location
 
 def get_face(rois, image):
-    h, w = image.shape[:2]
-    max_conf = 0
-    s_x, s_y, e_x, e_y = rois[0, 0, 0, 3:7] * np.array([w, h, w, h])
-    for i in range(rois.shape[2]):
-        confidence = rois[0, 0, i, 2]
-        if max_conf < confidence:
-            max_conf = confidence
-            box = rois[0, 0, i, 3:7] * np.array([w, h, w, h])
-            start_x, start_y, end_x, end_y = box.astype("int")
-            fH, fW = (end_y-start_y, end_x-start_x)
-            if fW < 20 or fH < 20:
-                continue
-            s_x, s_y, e_x, e_y = start_x, start_y, end_x, end_y
-
+    start_x, start_y, end_x, end_y = get_face_location(image, rois)
     max_face = image[start_y:end_y, start_x:end_x]
 
     return max_face
