@@ -19,8 +19,11 @@ def generate_uid():
 
 
 def gen_transformed_frames(frame, uid):
-    # When you read initially, it is flipped
-    frame = cv2.flip(crop_img(frame), 1)
+    decoded_image = cv2.imdecode(frame)
+
+    # Process the image for color and orientation
+    decoded_image = cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB)
+    decoded_image = cv2.flip(crop_img(decoded_image), 1)
 
     user_info = users[uid]
     if not user_info:
@@ -30,7 +33,7 @@ def gen_transformed_frames(frame, uid):
     transformed_frame = transform(
         user_info["kp_source"],
         user_info["kp_driving_initial"],
-        frame,
+        decoded_image,
         user_info["source_tensor"],
     )
 
