@@ -95,7 +95,6 @@ def handle_message(data):
 
 @socketio.on('data')
 def handle_message(data):
-    print('received data')
     uid = data["uid"]
     encoded_frame = data["frame"]
 
