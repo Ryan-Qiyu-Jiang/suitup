@@ -2,6 +2,7 @@ import sys
 sys.path.append('../')
 
 from lib.utils.image_transforms import scale_crop
+from lib.face_detection import get_face_location, get_facial_roi, get_source_frame
 import requests
 import imageio
 import cv2
@@ -38,11 +39,17 @@ def gen_frames():  # generate frame by frame from camera
 
 @app.route('/configure', methods=['POST'])
 def configure():
-    source_image = imageio.imread('images/ryan.png')
-    source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
+    source_image = imageio.imread('images/jack3.jpg')
+    rois = get_facial_roi(source_image)
+    s_x, s_y, e_x, e_y = get_face_location(source_image, rois)
+    cropped = get_source_frame(source_image, s_x, s_y, e_x, e_y)
 
-    source_image = cv2.flip(scale_crop(source_image), 1)
-    _, source_buffer = cv2.imencode('.jpg', source_image)
+    """
+    cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
+
+    cropped = cv2.flip(scale_crop(cropped), 1)
+    """
+    _, source_buffer = cv2.imencode('.jpg', cropped)
 
     _, frame = camera.read()
     frame = cv2.flip(scale_crop(frame), 1)
