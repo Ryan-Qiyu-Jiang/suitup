@@ -4,11 +4,12 @@ import cv2
 import imageio
 import requests
 import socketio
+import time
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
 
-server_url = "http://localhost:5000"
+server_url = "http://127.0.0.1:5000"
 configure_url = server_url + "/configure"
 transform_url = server_url + "/transform"
 
@@ -23,17 +24,16 @@ def crop_img(img):
     return cropped
 
 
-
 success, frame = camera.read()  # read the camera frame
 frame = cv2.flip(crop_img(frame), 1)
 ret, buffer = cv2.imencode('.jpg', frame)
 currframe = buffer.tobytes()
+is_connected = False
 
 # standard Python
-sio = socketio.Client()
+sio = socketio.Client(logger=True, engineio_logger=True)
 @sio.on('transformed')
 def message(data):
-    print('msg :')
     # Mutate currframe here
     global currframe
     currframe = data
@@ -41,6 +41,8 @@ def message(data):
 @sio.event
 def connect():
     print("I'm connected!")
+    global is_connected
+    is_connected = True
 
 @sio.event
 def connect_error():
@@ -95,7 +97,7 @@ def configure():
 
     global sio
     if not sio.sid:
-      sio.connect('http://localhost:5000', namespaces=['/'])
+      sio.connect('ws://127.0.0.1:5000')
 
     return redirect(url_for('index'))
 
@@ -114,34 +116,13 @@ def gen_transformed_frames():
             }
 
             global sio
-            sio.emit('data', data)
-            print("emitted!")
+            if is_connected:
+              sio.emit('data', data)
+              time.sleep(0.2)
 
-            global currframe
-            yield (b'--frame\r\n'
-                  b'Content-Type: image/jpeg\r\n\r\n' + currframe + b'\r\n')
-            """
-            yield (b'--frame\r\n'
-                  b'Content-Type: image/jpeg\r\n\r\n' + currframe + b'\r\n')
-            """
-    """
-    while True:
-        # Capture frame-by-frame
-        success, frame = camera.read()  # read the camera frame
-        if not success:
-            break
-        else:
-            _, frame_buffer = cv2.imencode('.jpg', frame)
-            frame_encoded = base64.b64encode(frame_buffer)
-            data = {
-              "uid": uid,
-              "frame": frame_encoded
-            }
-
-            r = requests.post(transform_url, data=data)
-            yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + r.content + b'\r\n')
-    """
+              global currframe
+              yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + currframe + b'\r\n')
 
 
 @app.route('/video_feed')

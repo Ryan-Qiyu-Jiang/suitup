@@ -114,9 +114,9 @@ def handle_message(data):
     decoded_frame = cv2.imdecode(frame_as_np, cv2.IMREAD_COLOR)
     decoded_frame = cv2.cvtColor(decoded_frame, cv2.COLOR_BGR2RGB)
     decoded_frame = cv2.flip(crop_img(decoded_frame), 1)
-    # print('received message: ')
-    # print(data)
+
     emit('transformed', gen_transformed_frames(decoded_frame, uid))
+
 
 @socketio.on('connect')
 def handle_connect():
