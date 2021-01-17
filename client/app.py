@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, Response
 import base64
 import cv2
 import imageio
@@ -42,7 +42,7 @@ def configure():
     return ('', 200)
 
 
-@app.route('/transform', methods = ['POST'])
+@app.route('/transform')
 def transform():
     _, frame = camera.read()
     _, frame_buffer = cv2.imencode('.jpg', frame)
@@ -55,16 +55,13 @@ def transform():
 
     r = requests.post(transform_url, data=data)
 
-    print(r)
-    print(r.content)
-
-    return ('', 204)
+    return Response(r.content, mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/')
 def index():
     """Video streaming home page."""
-    return render_template('index.html')
+    return render_template('index.html', uid=(uid != None))
 
 
 if __name__ == '__main__':
