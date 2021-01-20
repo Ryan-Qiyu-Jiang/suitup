@@ -15,6 +15,13 @@ from modules.generator import OcclusionAwareGenerator
 from modules.keypoint_detector import KPDetector
 from scipy.spatial import ConvexHull
 
+# @InProceedings{Siarohin_2019_NeurIPS,
+#   author={Siarohin, Aliaksandr and Lathuilière, Stéphane and Tulyakov, Sergey and Ricci, Elisa and Sebe, Nicu},
+#   title={First Order Motion Model for Image Animation},
+#   booktitle = {Conference on Neural Information Processing Systems (NeurIPS)},
+#   month = {December},
+#   year = {2019}
+# }
 
 if sys.version_info[0] < 3:
     raise Exception(

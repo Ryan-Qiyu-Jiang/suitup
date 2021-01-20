@@ -18,6 +18,7 @@
         height: 100vh;
         background-color: black;
     }
+    
 
     #buttons {
         position: absolute;
@@ -29,6 +30,22 @@
         position: absolute;
         bottom: 0;
         left: 0; 
+    }
+
+    #source-image {
+        position: relative;
+        top: 0;
+        left: 0;
+    }
+
+    #transform-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    #animation-wrapper {
+        position: relative;
     }
 
     button {
@@ -45,6 +62,10 @@
         </form>
     </div>
     <img id="video-feed" src="{{ url_for('video_feed') }}" width="128" height="128">
-    <img src="{{ url_for('transform') }}" width="256" height="256">
+    <div id="animation-wrapper">
+        <img src="{{ source_image }}" id="source-image">
+        <img src="{{ url_for('transform') }}" width="{{ transform_size[1] }}" height="{{ transform_size[0] }}" 
+                    id="transform-image" style="top: {{transform_pos[0]}}px; left: {{transform_pos[1]}}px">
+    </div>
 </body>
 </html>

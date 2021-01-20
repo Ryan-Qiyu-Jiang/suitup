@@ -14,12 +14,17 @@ import base64
 from collections import defaultdict
 import string
 import random
+from lib.utils.profiling import frame_count, timer
 
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 
 users = defaultdict(lambda: None)
 
+jpeg_quality = 95
 
 def generate_uid():
     letters = string.ascii_letters
@@ -43,8 +48,9 @@ def gen_transformed_frames(decoded_frame, uid):
     )
 
     # Process the transformed image
-    frame_ubytes = img_as_ubyte(transformed_frame)
-    _, buffer = cv2.imencode('.jpg', frame_ubytes)
+    frame_ubytes = cv2.normalize(src=transformed_frame, dst=None, alpha=0, beta=255, 
+                                    norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    _, buffer = cv2.imencode('.jpg', frame_ubytes, [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality])
     stream_bytes = buffer.tobytes()
     return stream_bytes
 
@@ -59,14 +65,14 @@ def configure():
     frame_as_np = np.fromstring(base64.b64decode(encoded_frame), np.uint8)
 
     decoded_source = cv2.imdecode(source_as_np, cv2.IMREAD_COLOR)
-
     decoded_frame = cv2.imdecode(frame_as_np, cv2.IMREAD_COLOR)
+    
     assert correct_dim(decoded_source)
     assert correct_dim(decoded_frame)
 
     distance = face_distance(decoded_source, decoded_frame)
     print('distance', distance)
-    if distance > 0.3:
+    if distance > 1:
         # TODO: Figure out not-same-face behavior
         return ("#", 200)
 
@@ -85,7 +91,6 @@ def configure():
 
     return (uid, 200)
 
-
 @app.route('/transform', methods=['POST'])
 def transform():
     # Configure will take a source image and a frame
@@ -94,7 +99,6 @@ def transform():
 
     frame_as_np = np.fromstring(base64.b64decode(encoded_frame), np.uint8)
     decoded_frame = cv2.imdecode(frame_as_np, cv2.IMREAD_COLOR)
-
     res = (gen_transformed_frames(decoded_frame, uid), 200)
     return res
 

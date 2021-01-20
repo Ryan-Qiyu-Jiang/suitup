@@ -41,10 +41,17 @@ def get_face_location(image, rois):
     return (s_x, s_y, e_x, e_y)
 
 def get_source_frame(image, start_x, start_y, end_x, end_y):
-    center_x = (end_x+start_x)/2
-    center_y = (end_y-start_y)/2
+    center_x = int((end_x+start_x)/2)
+    center_y = int((end_y+start_y)/2)
     fH, fW = (end_y-start_y, end_x-start_x)
-    crop_size = (fH+fW)/2
-    s = crop_size/2
-    face = image[center_y-s:center_y+s, center_x-s:center_x+s]
-    return scale_crop(face)
+    h, w = image.shape[:2]
+    crop_size = max(fH, fW)*1.4
+    max_s = min(center_y, h-center_y, center_x, w-center_x)
+    s = int(min(crop_size//2, max_s))
+    s_y = max(center_y-s, 0)
+    e_y = min(center_y+s, h)
+    s_x = max(center_x-s, 0)
+    e_x = min(center_x+s, w)
+    face = image[s_y:e_y, s_x:e_x]
+    pos = (s_y, s_x)
+    return face, pos

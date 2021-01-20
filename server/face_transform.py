@@ -19,11 +19,11 @@ from skimage import img_as_ubyte
 
 warnings.filterwarnings("ignore")
 
-fps = 32
+fps = 8
 predictions = []
 relative = True
 adapt_movement_scale = True
-cpu = False
+cpu = True
 
 generator, kp_detector = load_checkpoints(config_path='config/vox-256.yaml',
                                           checkpoint_path='checkpoints/vox-cpk.pth.tar')
